@@ -3,7 +3,7 @@
   "productName": "erp-lite",
   "version": "1.0.0",
   "description": "My Electron application description",
-  "main": ".vite/build/main.js",
+  "main": ".vite/build/index.js",
   "private": true,
   "scripts": {
     "start": "electron-forge start",
@@ -35,6 +35,8 @@
     "vite": "^5.4.21"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.105.4",
+    "dotenv": "^17.4.2",
     "electron-squirrel-startup": "^1.0.1"
   }
 }

@@ -1,13 +1,22 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
+import { AuthService } from './services/auth';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
   app.quit();
 }
 
+function setupIPC(){
+  ipcMain.handle('auth:login',(_, email: string, password: string)=> {
+     const authService = new AuthService();
+     return authService.login(email ,password);
+  });
+}
+
 const createWindow = () => {
+  setupIPC();
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
@@ -20,6 +29,9 @@ const createWindow = () => {
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
+    mainWindow.webContents.openDevTools({
+      mode: 'detach'
+    });
   } else {
     mainWindow.loadFile(
       path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
@@ -27,7 +39,6 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
