@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
 import { AuthService } from './services/auth';
+import { syncDatabase } from './services/datasource';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -44,6 +45,16 @@ const createWindow = () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
+const initializeApp = async () => {
+    try{
+        if (!app.isPackaged){
+            await syncDatabase();
+        }
+        createWindow();
+    } catch (error){
+        console.error('Erro ao conectar ao banco de dados:')
+    }
+}
 app.on('ready', createWindow);
 
 // Quit when all windows are closed, except on macOS. There, it's common
