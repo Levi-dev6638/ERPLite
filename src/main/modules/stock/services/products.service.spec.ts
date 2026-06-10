@@ -1,24 +1,28 @@
 import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
-import { ProductsController } from './products.controller';
-import { ProductsService } from '../services/products.service';
+import { Repository } from 'typeorm';
+import { ProductsService } from './products.service';
+import { Product } from '../models/product.model';
 
-describe('ProductsController', () => {
-  let controller: ProductsController;
+describe('ProductsService', () => {
+  let service: ProductsService;
 
   beforeAll(() => {
-    const mockService = {
-      listProducts: vi.fn().mockReturnValue([{ id: 1, name: 'Teste' }]),
-    } as unknown as ProductsService;
+    const mockRepository = {
+      find: vi.fn().mockResolvedValue([{ id: 1, name: 'Teste' }]),
+    } as unknown as Repository<Product>;
 
-    controller = new ProductsController(mockService);
+    service = new ProductsService(mockRepository);
   });
 
   beforeEach(() => {
     vi.restoreAllMocks();
   });
 
-  it('deve retornar os produtos usando Injeção de Dependência', () => {
-    expect(controller.index()).toEqual([{ id: 1, name: 'Teste' }]);
+  it('deve retornar a lista de produtos', async () => {
+    const result = await service.listProducts();
+    expect(result).toEqual([{ id: 1, name: 'Teste' }]);
   });
+
 });
+ 
  
